@@ -5,6 +5,9 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * 上层硬解码封装类
+ */
 public class Scanner {
     private static final String TAG = Scanner.class.getSimpleName();
     private ISerialPort serialPort;
@@ -18,6 +21,7 @@ public class Scanner {
     private void initSerialPort() {
         try {
             long time = System.currentTimeMillis();
+            //通过SerialPortFactory动态创建各个厂家的串口类
             serialPort = SerialPortFactory.create();
             Log.i(TAG, "cost time=" + (System.currentTimeMillis() - time));
         } catch (Exception e) {
@@ -25,6 +29,9 @@ public class Scanner {
         }
     }
 
+    /**
+     * 上层调用接口，不允许删除此函数和更改函数名，只能更改实现
+     */
     public void startScan() {
         initSerialPort();
         if (decodeThread != null) {
@@ -35,6 +42,9 @@ public class Scanner {
         decodeThread.start();
     }
 
+    /**
+     * 上层调用接口，不允许删除此函数和更改函数名，只能更改实现
+     */
     public void stopScan() {
         if (decodeThread != null) {
             decodeThread.stopDecode();
@@ -46,6 +56,9 @@ public class Scanner {
         serialPort.powerOff();
     }
 
+    /**
+     * 上层调用接口，不允许删除此函数和更改函数名，只能更改实现
+     */
     public void release() {
         stopScan();
         onDecodeCallback = null;
