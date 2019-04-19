@@ -1,0 +1,44 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    
+    repositories {
+        jcenter()
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.3'
+        
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
+    }
+
+    ext.androidBuildVersionTools = "27.0.3"
+    ext.supportLibraryVersion = "27.1.1"
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+static def androidCompileSdk() { return 27 }
+
+static def androidBuildToolVersion() { return 27 }
+
+static def androidTargetSdk() { return 27 }
+
+static def androidMinSdk() { return 15 }
