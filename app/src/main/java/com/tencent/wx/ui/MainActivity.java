@@ -52,8 +52,15 @@ public class MainActivity extends BaseActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scan.onStartScan();
-                button.setText("停止扫码");
+                if ("停止扫码".equals(button.getText().toString())) {
+                    scan.onStopScan();
+                    button.setText("开始扫码");
+                } else if ("开始扫码".equals(button.getText().toString())) {
+                    scan.onStartScan();
+                    button.setText("停止扫码");
+                }
+
+
             }
         });
     }
