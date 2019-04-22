@@ -36,7 +36,9 @@ public class Scanner {
     public void startScan() {
         Log.v(TAG, "startScan");
         initSerialPortIfNeed();
+        long time = System.currentTimeMillis();
         serialPort.powerOn();
+        Log.v(TAG, "powerOn cost time " + (System.currentTimeMillis() - time));
         serialPort.initStream();
         if (decodeThread == null) {
             decodeThread = new ReadThread();
@@ -51,7 +53,9 @@ public class Scanner {
     public void stopScan() {
         decodeThread.stopDecode();
         if (serialPort != null) {
+            long time = System.currentTimeMillis();
             serialPort.powerOff();
+            Log.v(TAG, "powerOff cost time " + (System.currentTimeMillis() - time));
         }
     }
 
@@ -102,11 +106,11 @@ public class Scanner {
         public void run() {
             super.run();
             while (serialPort != null && serialPort.getInputStream() != null) {
-                Log.v(TAG, "run stopRead: = " + stopRead);
                 synchronized (this) {
                     if (stopRead) {
                         try {
                             wait();
+                            Log.v(TAG, "stop scan  to  wait for notify");
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

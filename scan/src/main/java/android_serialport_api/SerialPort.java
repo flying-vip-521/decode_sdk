@@ -17,7 +17,11 @@ public class SerialPort extends ISerialPort {
 
 
     public SerialPort() {
-        mFd = open(new File("/dev/ttyS0").getAbsolutePath(), 115200, D_8, P_NONE, S_1, 0);
+        try {
+            mFd = open(new File("/dev/ttyS0").getAbsolutePath(), 115200, D_8, P_NONE, S_1, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

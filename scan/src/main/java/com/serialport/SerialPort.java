@@ -21,7 +21,6 @@ public class SerialPort extends ISerialPort {
         try {
             if (Build.PRODUCT.equals("JP762AC")) {
                 mFd = open("/dev/ttyS3", 115200, 0);
-                powerOn();
             } else {
                 mFd = open("/dev/ttyS2", 115200, 0);
             }
