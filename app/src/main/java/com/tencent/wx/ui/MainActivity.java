@@ -23,14 +23,19 @@ public class MainActivity extends BaseActivity {
     private TextView decodeResult;
     private IScan scan;
     private int id;
+    private Button button;
     private OnDecodeListener decodeListener = new OnDecodeListener() {
         @Override
         public void onDecode(String code) {
             L.v(TAG, "onDecode:" + code);
             decodeResult.setText(code);
             soundPool.play(id, 1, 1, 0, 0, 1);
+
+            scan.onStopScan();
+            button.setText("开始扫码");
         }
     };
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,18 +47,30 @@ public class MainActivity extends BaseActivity {
         soundPool = new SoundPool(3, STREAM_SYSTEM, 1);
         //load 耗时，正常情况下应该写在子线程
         id = soundPool.load(this, R.raw.beep, 1);
+
+        button = findViewById(R.id.start);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scan.onStartScan();
+                button.setText("停止扫码");
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         scan.onStartScan();
+        button.setText("停止扫码");
     }
+
 
     @Override
     protected void onPause() {
         super.onPause();
         scan.onActivityPaused(this);
+        button.setText("开始扫码");
     }
 
     @Override

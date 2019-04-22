@@ -18,22 +18,26 @@ public abstract class ISerialPort {
     private FileOutputStream mFileOutputStream;
     protected FileDescriptor mFd;
 
-    public ISerialPort() throws SecurityException, IOException {
+    public ISerialPort() {
     }
 
-    protected void initStream() throws IOException {
-        if (mFd == null) {
-            Log.e("ISerialPort", "native open returns null");
-            throw new IOException();
-        } else {
-            mFileInputStream = new FileInputStream(mFd);
-            mFileOutputStream = new FileOutputStream(mFd);
+    protected void initStream() {
+        try {
+            if (mFd == null) {
+                Log.e("ISerialPort", "native open returns null");
+                return;
+            }
+            if (mFileInputStream == null) {
+                mFileInputStream = new FileInputStream(mFd);
+                mFileOutputStream = new FileOutputStream(mFd);
+            }
             int sizeFirst = mFileInputStream.available();  //清空缓存
             if (sizeFirst > 0) {
                 byte[] buffer = new byte[sizeFirst];
                 mFileInputStream.read(buffer);
             }
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -9,8 +9,17 @@
     <TextView
         android:id="@+id/decode_result"
         android:layout_width="wrap_content"
-        android:textSize="30px"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="Hello World!"
+        android:textSize="30px" />
+
+    <Button
+        android:id="@+id/start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:text="开始扫码"
+        android:textSize="30px" />
 
 </LinearLayout>

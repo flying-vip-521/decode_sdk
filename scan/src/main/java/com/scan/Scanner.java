@@ -14,16 +14,17 @@ public class Scanner {
     private ReadThread decodeThread;
     private OnDecodeCallback onDecodeCallback;
 
+
     public Scanner(OnDecodeCallback onDecodeCallback) {
         this.onDecodeCallback = onDecodeCallback;
     }
 
-    private void initSerialPort() {
+    private void initSerialPortIfNeed() {
         try {
-            long time = System.currentTimeMillis();
-            //通过SerialPortFactory动态创建各个厂家的串口类
-            serialPort = SerialPortFactory.create();
-            Log.i(TAG, "cost time=" + (System.currentTimeMillis() - time));
+            if (serialPort == null) {
+                //通过SerialPortFactory动态创建各个厂家的串口类
+                serialPort = SerialPortFactory.create();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -33,27 +34,25 @@ public class Scanner {
      * 上层调用接口，不允许删除此函数和更改函数名，只能更改实现
      */
     public void startScan() {
-        initSerialPort();
-        if (decodeThread != null) {
-            decodeThread.stopDecode();
+        Log.v(TAG, "startScan");
+        initSerialPortIfNeed();
+        serialPort.powerOn();
+        serialPort.initStream();
+        if (decodeThread == null) {
+            decodeThread = new ReadThread();
+            decodeThread.start();
         }
-
-        decodeThread = new ReadThread();
-        decodeThread.start();
+        decodeThread.starDecode();
     }
 
     /**
      * 上层调用接口，不允许删除此函数和更改函数名，只能更改实现
      */
     public void stopScan() {
-        if (decodeThread != null) {
-            decodeThread.stopDecode();
-        }
-
+        decodeThread.stopDecode();
         if (serialPort != null) {
-            serialPort.doClose();
+            serialPort.powerOff();
         }
-        serialPort.powerOff();
     }
 
     /**
@@ -62,6 +61,9 @@ public class Scanner {
     public void release() {
         stopScan();
         onDecodeCallback = null;
+        if (serialPort != null) {
+            serialPort.doClose();
+        }
     }
 
 
@@ -76,20 +78,41 @@ public class Scanner {
     }
 
     private class ReadThread extends Thread {
-        private boolean stopRead;
+        private boolean stopRead = true;
 
         private ReadThread() {
             stopRead = false;
         }
 
+        public void starDecode() {
+            synchronized (this) {
+                if (stopRead) {
+                    stopRead = false;
+                    notify();
+                }
+            }
+        }
+
         public void stopDecode() {
-            stopRead = true;
+            synchronized (this) {
+                stopRead = true;
+            }
         }
 
         public void run() {
             super.run();
-            while (!stopRead && serialPort != null && serialPort.getInputStream() != null) {
-                decode();
+            while (serialPort != null && serialPort.getInputStream() != null) {
+                Log.v(TAG, "run stopRead: = " + stopRead);
+                synchronized (this) {
+                    if (stopRead) {
+                        try {
+                            wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    decode();
+                }
             }
         }
 

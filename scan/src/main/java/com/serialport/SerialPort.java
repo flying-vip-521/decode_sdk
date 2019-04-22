@@ -17,7 +17,7 @@ public class SerialPort extends ISerialPort {
     private String IO_CS1 = "/proc/jbcommon/gpio_control/UART3_SEL1";// B默认值：1，其他值无效
     private String POWER = "/proc/jbcommon/gpio_control/ICCard_CTL";// 默认值：1，其他值无效
 
-    public SerialPort() throws SecurityException, IOException {
+    public SerialPort() {
         try {
             if (Build.PRODUCT.equals("JP762AC")) {
                 mFd = open("/dev/ttyS3", 115200, 0);
@@ -25,11 +25,9 @@ public class SerialPort extends ISerialPort {
             } else {
                 mFd = open("/dev/ttyS2", 115200, 0);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-        initStream();
     }
 
     @Override

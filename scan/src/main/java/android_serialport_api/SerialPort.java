@@ -16,10 +16,8 @@ public class SerialPort extends ISerialPort {
     public static final int S_1 = 1;
 
 
-    public SerialPort() throws SecurityException, IOException {
-        powerOn();
+    public SerialPort() {
         mFd = open(new File("/dev/ttyS0").getAbsolutePath(), 115200, D_8, P_NONE, S_1, 0);
-        initStream();
     }
 
     @Override
