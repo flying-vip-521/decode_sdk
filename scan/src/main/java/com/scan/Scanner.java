@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * ä¸Šå±‚ç¡¬è§£ç å°è£…ç±»
+ * ÉÏ²ãÓ²½âÂë·â×°Àà
  */
 public class Scanner {
     private static final String TAG = Scanner.class.getSimpleName();
@@ -22,7 +22,7 @@ public class Scanner {
     private void initSerialPortIfNeed() {
         try {
             if (serialPort == null) {
-                //é€šè¿‡SerialPortFactoryåŠ¨æ€åˆ›å»ºå„ä¸ªåŽ‚å®¶çš„ä¸²å£ç±»
+                //Í¨¹ýSerialPortFactory¶¯Ì¬´´½¨¸÷¸ö³§¼ÒµÄ´®¿ÚÀà
                 serialPort = SerialPortFactory.create();
             }
         } catch (Exception e) {
@@ -31,7 +31,7 @@ public class Scanner {
     }
 
     /**
-     * ä¸Šå±‚è°ƒç”¨æŽ¥å£ï¼Œä¸å…è®¸åˆ é™¤æ­¤å‡½æ•°å’Œæ›´æ”¹å‡½æ•°åï¼Œåªèƒ½æ›´æ”¹å®žçŽ°
+     * ÉÏ²ãµ÷ÓÃ½Ó¿Ú£¬²»ÔÊÐíÉ¾³ý´Ëº¯ÊýºÍ¸ü¸Äº¯ÊýÃû£¬Ö»ÄÜ¸ü¸ÄÊµÏÖ
      */
     public void startScan() {
         Log.v(TAG, "startScan");
@@ -48,7 +48,7 @@ public class Scanner {
     }
 
     /**
-     * ä¸Šå±‚è°ƒç”¨æŽ¥å£ï¼Œä¸å…è®¸åˆ é™¤æ­¤å‡½æ•°å’Œæ›´æ”¹å‡½æ•°åï¼Œåªèƒ½æ›´æ”¹å®žçŽ°
+     * ÉÏ²ãµ÷ÓÃ½Ó¿Ú£¬²»ÔÊÐíÉ¾³ý´Ëº¯ÊýºÍ¸ü¸Äº¯ÊýÃû£¬Ö»ÄÜ¸ü¸ÄÊµÏÖ
      */
     public void stopScan() {
         decodeThread.stopDecode();
@@ -60,7 +60,7 @@ public class Scanner {
     }
 
     /**
-     * ä¸Šå±‚è°ƒç”¨æŽ¥å£ï¼Œä¸å…è®¸åˆ é™¤æ­¤å‡½æ•°å’Œæ›´æ”¹å‡½æ•°åï¼Œåªèƒ½æ›´æ”¹å®žçŽ°
+     * ÉÏ²ãµ÷ÓÃ½Ó¿Ú£¬²»ÔÊÐíÉ¾³ý´Ëº¯ÊýºÍ¸ü¸Äº¯ÊýÃû£¬Ö»ÄÜ¸ü¸ÄÊµÏÖ
      */
     public void release() {
         stopScan();
@@ -107,19 +107,15 @@ public class Scanner {
             super.run();
             while (serialPort != null && serialPort.getInputStream() != null) {
                 synchronized (this) {
-                    waitForStopRead();
+                    if (stopRead) {
+                        try {
+                            Log.v(TAG, "stop scan  to  wait for notify");
+                            wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     decode();
-                }
-            }
-        }
-
-        private void waitForStopRead() {
-            if (stopRead) {
-                try {
-                    wait();
-                    Log.v(TAG, "stop scan  to  wait for notify");
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
         }
@@ -127,13 +123,14 @@ public class Scanner {
         private void decode() {
             try {
                 InputStream inputStream = serialPort.getInputStream();
-                Thread.sleep(100L);
                 int sizeFirst = inputStream.available();
+                Thread.sleep(30L);
                 if (sizeFirst > 0) {
-                    Thread.sleep(100L);
+                    Thread.sleep(30L);
                     if (stopRead) {
                         return;
                     }
+
                     int sizeSecond = inputStream.available();
                     if (sizeSecond > 0 && sizeFirst == sizeSecond) {
                         byte[] buffer = new byte[sizeSecond];
