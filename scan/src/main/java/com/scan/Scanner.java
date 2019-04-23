@@ -107,15 +107,19 @@ public class Scanner {
             super.run();
             while (serialPort != null && serialPort.getInputStream() != null) {
                 synchronized (this) {
-                    if (stopRead) {
-                        try {
-                            wait();
-                            Log.v(TAG, "stop scan  to  wait for notify");
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    waitForStopRead();
                     decode();
+                }
+            }
+        }
+
+        private void waitForStopRead() {
+            if (stopRead) {
+                try {
+                    wait();
+                    Log.v(TAG, "stop scan  to  wait for notify");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -123,13 +127,13 @@ public class Scanner {
         private void decode() {
             try {
                 InputStream inputStream = serialPort.getInputStream();
+                Thread.sleep(100L);
                 int sizeFirst = inputStream.available();
                 if (sizeFirst > 0) {
                     Thread.sleep(100L);
                     if (stopRead) {
                         return;
                     }
-
                     int sizeSecond = inputStream.available();
                     if (sizeSecond > 0 && sizeFirst == sizeSecond) {
                         byte[] buffer = new byte[sizeSecond];
