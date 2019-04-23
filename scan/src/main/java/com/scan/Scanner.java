@@ -124,9 +124,8 @@ public class Scanner {
             try {
                 InputStream inputStream = serialPort.getInputStream();
                 int sizeFirst = inputStream.available();
-                Thread.sleep(30L);
                 if (sizeFirst > 0) {
-                    Thread.sleep(30L);
+                    Thread.sleep(10L);
                     if (stopRead) {
                         return;
                     }
@@ -137,8 +136,11 @@ public class Scanner {
                         sizeSecond = inputStream.read(buffer);
                         if (!stopRead && sizeSecond > 0) {
                             onDecode(new String(buffer));
+                            Thread.sleep(50L);
                         }
                     }
+                } else {
+                    Thread.sleep(20L);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
