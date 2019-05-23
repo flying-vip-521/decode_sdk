@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * 上层硬解码封装类
  */
 public class Scanner {
     private static final String TAG = Scanner.class.getSimpleName();
@@ -22,7 +21,6 @@ public class Scanner {
     private void initSerialPortIfNeed() {
         try {
             if (serialPort == null) {
-                //通过SerialPortFactory动态创建各个厂家的串口类
                 serialPort = SerialPortFactory.create();
             }
         } catch (Exception e) {
@@ -31,7 +29,6 @@ public class Scanner {
     }
 
     /**
-     * 上层调用接口，不允许删除此函数和更改函数名，只能更改实现
      */
     public void startScan() {
         Log.v(TAG, "startScan");
@@ -48,10 +45,11 @@ public class Scanner {
     }
 
     /**
-     * 上层调用接口，不允许删除此函数和更改函数名，只能更改实现
      */
     public void stopScan() {
-        decodeThread.stopDecode();
+        if (decodeThread != null) {
+            decodeThread.stopDecode();
+        }
         if (serialPort != null) {
             long time = System.currentTimeMillis();
             serialPort.powerOff();
@@ -60,7 +58,6 @@ public class Scanner {
     }
 
     /**
-     * 上层调用接口，不允许删除此函数和更改函数名，只能更改实现
      */
     public void release() {
         stopScan();
@@ -72,7 +69,9 @@ public class Scanner {
 
 
     private void onDecode(String code) {
+        code = code.trim();
         Log.v(TAG, "onDecode = " + code);
+        Log.v(TAG, "onDecode.length = " + code.length());
         if (onDecodeCallback != null) {
             if (code.endsWith("\r\n")) {
                 code = code.substring(0, code.length() - 2);
@@ -89,7 +88,7 @@ public class Scanner {
         }
 
         public void starDecode() {
-            synchronized (this) {
+            synchronized (ReadThread.this) {
                 if (stopRead) {
                     stopRead = false;
                     notify();
@@ -98,7 +97,7 @@ public class Scanner {
         }
 
         public void stopDecode() {
-            synchronized (this) {
+            synchronized (ReadThread.this) {
                 stopRead = true;
             }
         }
@@ -106,8 +105,8 @@ public class Scanner {
         public void run() {
             super.run();
             while (serialPort != null && serialPort.getInputStream() != null) {
-                synchronized (this) {
-                    if (stopRead) {
+                if (stopRead) {
+                    synchronized (ReadThread.this) {
                         try {
                             Log.v(TAG, "stop scan  to  wait for notify");
                             wait();
@@ -115,8 +114,8 @@ public class Scanner {
                             e.printStackTrace();
                         }
                     }
-                    decode();
                 }
+                decode();
             }
         }
 
@@ -142,6 +141,7 @@ public class Scanner {
                 } else {
                     Thread.sleep(20L);
                 }
+                Log.v(TAG, "decode running");
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InterruptedException var6) {

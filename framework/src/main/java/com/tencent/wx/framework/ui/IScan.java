@@ -12,14 +12,20 @@ public abstract class IScan implements Application.ActivityLifecycleCallbacks {
     private Activity activity;
     private OnDecodeListener listener;
     protected ViewGroup container;
+    protected boolean preview = true;
 
     public IScan(OnDecodeListener listener) {
         this.listener = listener;
     }
 
-    public abstract void onStartScan();
+    public void onStartScan() {
+        preview = true;
+    }
 
-    public abstract void onStopScan();
+    public void onStopScan() {
+        preview = false;
+    }
+
 
     protected abstract int getActivityLayout();
 
@@ -60,12 +66,17 @@ public abstract class IScan implements Application.ActivityLifecycleCallbacks {
 
     @Override
     public void onActivityResumed(Activity activity) {
-
+        if (preview) {
+            onStartScan();
+        }
     }
 
     @Override
     public void onActivityPaused(Activity activity) {
-
+        if (preview) {
+            onStopScan();
+            preview = true;
+        }
     }
 
     @Override
@@ -81,5 +92,9 @@ public abstract class IScan implements Application.ActivityLifecycleCallbacks {
     @Override
     public void onActivityDestroyed(Activity activity) {
         this.activity = null;
+    }
+
+    public boolean isPreview() {
+        return preview;
     }
 }

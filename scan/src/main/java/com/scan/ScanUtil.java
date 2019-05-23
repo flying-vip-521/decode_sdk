@@ -4,8 +4,6 @@ import android.os.Build;
 
 public class ScanUtil {
     /**
-     * 捷宝硬解码
-     *
      * @return
      */
     public static boolean isJiebaoHard() {
@@ -13,10 +11,16 @@ public class ScanUtil {
     }
 
     /**
-     * 天波硬解码：TPS580C
      * @return
      */
     public static boolean isTPS580C() {
         return Build.PRODUCT.equals("rk3188");
+    }
+
+    /**
+     * @return
+     */
+    public static boolean isHT380K() {
+        return Build.PRODUCT.equals("HT380K");
     }
 }
