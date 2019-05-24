@@ -42,9 +42,13 @@ public abstract class ISerialPort {
     }
 
 
-    protected abstract void powerOn();
+    public abstract void onTriger();
 
-    protected abstract void powerOff();
+    public abstract boolean stopRead();
+
+    protected abstract void powerOn(PowerListener powerListener);
+
+    protected abstract void powerOff(PowerListener powerListener);
 
     public abstract void doClose();
 

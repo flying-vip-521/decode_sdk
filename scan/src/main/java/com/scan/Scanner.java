@@ -12,6 +12,32 @@ public class Scanner {
     private ISerialPort serialPort;
     private ReadThread decodeThread;
     private OnDecodeCallback onDecodeCallback;
+    private PowerListener listener = new PowerListener() {
+        @Override
+        public void powerOnFinished() {
+            startRead();
+        }
+
+        @Override
+        public void powerOffBefore() {
+            stopRead();
+        }
+    };
+
+    private void startRead() {
+        serialPort.initStream();
+        if (decodeThread == null) {
+            decodeThread = new ReadThread();
+            decodeThread.start();
+        }
+        decodeThread.starDecode();
+    }
+
+    private void stopRead() {
+        if (decodeThread != null) {
+            decodeThread.stopDecode();
+        }
+    }
 
 
     public Scanner(OnDecodeCallback onDecodeCallback) {
@@ -34,25 +60,25 @@ public class Scanner {
         Log.v(TAG, "startScan");
         initSerialPortIfNeed();
         long time = System.currentTimeMillis();
-        serialPort.powerOn();
+        serialPort.powerOn(listener);
         Log.v(TAG, "powerOn cost time " + (System.currentTimeMillis() - time));
-        serialPort.initStream();
-        if (decodeThread == null) {
-            decodeThread = new ReadThread();
-            decodeThread.start();
+    }
+
+
+    public void onTrigerScan() {
+        Log.d(TAG, "onTrigerScan");
+        if (serialPort != null) {
+            serialPort.onTriger();
         }
-        decodeThread.starDecode();
+        startRead();
     }
 
     /**
      */
     public void stopScan() {
-        if (decodeThread != null) {
-            decodeThread.stopDecode();
-        }
         if (serialPort != null) {
             long time = System.currentTimeMillis();
-            serialPort.powerOff();
+            serialPort.powerOff(listener);
             Log.v(TAG, "powerOff cost time " + (System.currentTimeMillis() - time));
         }
     }
@@ -60,11 +86,11 @@ public class Scanner {
     /**
      */
     public void release() {
-        stopScan();
         onDecodeCallback = null;
         if (serialPort != null) {
             serialPort.doClose();
         }
+        stopScan();
     }
 
 
@@ -77,6 +103,9 @@ public class Scanner {
                 code = code.substring(0, code.length() - 2);
             }
             onDecodeCallback.onDecode(code);
+        }
+        if (serialPort.stopRead()) {
+            stopRead();
         }
     }
 

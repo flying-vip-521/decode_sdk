@@ -28,6 +28,11 @@ public class Scanner extends IScan {
     }
 
     @Override
+    public void onTrigerScan() {
+        scanner.onTrigerScan();
+    }
+
+    @Override
     public void onStartScan() {
         scanner.startScan();
     }
@@ -40,18 +45,6 @@ public class Scanner extends IScan {
     @Override
     protected int getActivityLayout() {
         return R.layout.activity_scan_container;
-    }
-
-    @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        super.onActivityCreated(activity, savedInstanceState);
-        onStartScan();
-    }
-
-    @Override
-    public void onActivityStopped(Activity activity) {
-        super.onActivityStopped(activity);
-        onStopScan();
     }
 
     @Override

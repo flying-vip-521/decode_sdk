@@ -22,4 +22,31 @@
         android:text="开始扫码"
         android:textSize="30px" />
 
+    <Button
+        android:id="@+id/open"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:text="Open"
+        android:textSize="30px" />
+
+    <Button
+        android:id="@+id/triger"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:text="Scan"
+        android:textSize="30px" />
+
+    <Button
+        android:id="@+id/colse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:text="Close"
+        android:textSize="30px" />
+
 </LinearLayout>

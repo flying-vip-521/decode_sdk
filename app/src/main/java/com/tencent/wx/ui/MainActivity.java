@@ -2,7 +2,9 @@ package com.tencent.wx.ui;
 
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.support.annotation.BinderThread;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,15 +26,20 @@ public class MainActivity extends BaseActivity {
     private IScan scan;
     private int id;
     private Button button;
+
+    private Button btnOpen;
+    private Button btnTriger;
+    private Button btnColse;
+
+
     private OnDecodeListener decodeListener = new OnDecodeListener() {
         @Override
         public void onDecode(String code) {
-            L.v(TAG, "onDecode:" + code);
+            L.e(TAG, "onDecode:" + code);
             decodeResult.setText(code);
             soundPool.play(id, 1, 1, 0, 0, 1);
-
-            scan.onStopScan();
-            button.setText("开始扫码");
+//            scan.onStopScan();
+//            button.setText("开始扫码");
         }
     };
 
@@ -59,17 +66,41 @@ public class MainActivity extends BaseActivity {
                     scan.onStartScan();
                     button.setText("停止扫码");
                 }
-
-
             }
         });
+
+
+        btnOpen = (Button) findViewById(R.id.open);
+        btnOpen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                scan.onStartScan();
+            }
+        });
+
+        btnTriger = (Button) findViewById(R.id.triger);
+        btnTriger.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                scan.onTrigerScan();
+            }
+        });
+
+        btnColse = (Button) findViewById(R.id.colse);
+        btnColse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                scan.onStopScan();
+            }
+        });
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        scan.onStartScan();
-        button.setText("停止扫码");
+//        scan.onStartScan();
+//        button.setText("停止扫码");
     }
 
 
@@ -77,7 +108,7 @@ public class MainActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         scan.onActivityPaused(this);
-        button.setText("开始扫码");
+//        button.setText("开始扫码");
     }
 
     @Override

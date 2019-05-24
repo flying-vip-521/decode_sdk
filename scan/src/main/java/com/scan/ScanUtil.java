@@ -7,7 +7,7 @@ public class ScanUtil {
      * @return
      */
     public static boolean isJiebaoHard() {
-        return Build.PRODUCT.equals("JIEBAO_HARD");
+        return Build.PRODUCT.equals("JIEBAO_HARD") || Build.PRODUCT.equals("HT380K");
     }
 
     /**

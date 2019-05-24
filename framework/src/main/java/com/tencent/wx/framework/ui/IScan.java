@@ -18,6 +18,8 @@ public abstract class IScan implements Application.ActivityLifecycleCallbacks {
         this.listener = listener;
     }
 
+    public abstract void onTrigerScan();
+
     public void onStartScan() {
         preview = true;
     }

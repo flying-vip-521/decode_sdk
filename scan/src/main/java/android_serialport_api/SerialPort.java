@@ -4,11 +4,11 @@ import android.util.Log;
 
 import com.common.pos.api.util.posutil.PosUtil;
 import com.scan.ISerialPort;
+import com.scan.PowerListener;
 import com.scan.ScanUtil;
 
 import java.io.File;
 import java.io.FileDescriptor;
-import java.io.IOException;
 
 public class SerialPort extends ISerialPort {
     private static final int D_8 = 8;
@@ -25,12 +25,27 @@ public class SerialPort extends ISerialPort {
     }
 
     @Override
-    protected void powerOn() {
-        PosUtil.setRfidPower(1);
+    public void onTriger() {
     }
 
     @Override
-    protected void powerOff() {
+    public boolean stopRead() {
+        return false;
+    }
+
+    @Override
+    protected void powerOn(PowerListener powerListener) {
+        PosUtil.setRfidPower(1);
+        if (powerListener != null) {
+            powerListener.powerOnFinished();
+        }
+    }
+
+    @Override
+    protected void powerOff(PowerListener powerListener) {
+        if (powerListener != null) {
+            powerListener.powerOffBefore();
+        }
         PosUtil.setRfidPower(0);
     }
 
