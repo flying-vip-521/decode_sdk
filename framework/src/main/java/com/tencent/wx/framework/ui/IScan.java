@@ -9,6 +9,7 @@ import com.tencent.wx.framework.log.L;
 import com.tencent.wx.framework.util.TaskExcutor;
 
 public abstract class IScan implements Application.ActivityLifecycleCallbacks {
+    private static final String TAG = IScan.class.getSimpleName();
     private Activity activity;
     private OnDecodeListener listener;
     protected ViewGroup container;
@@ -68,6 +69,7 @@ public abstract class IScan implements Application.ActivityLifecycleCallbacks {
 
     @Override
     public void onActivityResumed(Activity activity) {
+        L.v(TAG, "onActivityResumed preview:" + preview);
         if (preview) {
             onStartScan();
         }
@@ -75,9 +77,12 @@ public abstract class IScan implements Application.ActivityLifecycleCallbacks {
 
     @Override
     public void onActivityPaused(Activity activity) {
+        L.v(TAG, "onActivityPaused preview:" + preview);
         if (preview) {
             onStopScan();
             preview = true;
+        } else {
+            onStopScan();
         }
     }
 
@@ -98,5 +103,10 @@ public abstract class IScan implements Application.ActivityLifecycleCallbacks {
 
     public boolean isPreview() {
         return preview;
+    }
+
+    public void setPreview(boolean preview) {
+        L.v(TAG, "setPreview:" + preview);
+        this.preview = preview;
     }
 }
