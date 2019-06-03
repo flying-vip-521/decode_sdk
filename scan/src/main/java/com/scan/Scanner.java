@@ -34,6 +34,7 @@ public class Scanner {
     }
 
     private void stopRead() {
+        Log.v(TAG, "stopRead");
         if (decodeThread != null) {
             decodeThread.stopDecode();
         }
@@ -77,15 +78,19 @@ public class Scanner {
      */
     public void stopScan() {
         if (serialPort != null) {
+            Log.v(TAG, "stopScan to make power off");
             long time = System.currentTimeMillis();
             serialPort.powerOff(listener);
             Log.v(TAG, "powerOff cost time " + (System.currentTimeMillis() - time));
+        } else {
+            Log.v(TAG, "stopScan, but serialPort is null");
         }
     }
 
     /**
      */
     public void release() {
+        Log.v(TAG, "release ");
         onDecodeCallback = null;
         if (serialPort != null) {
             serialPort.doClose();
@@ -126,6 +131,7 @@ public class Scanner {
         }
 
         public void stopDecode() {
+            Log.v(TAG, "ReadThread stopRead");
             synchronized (ReadThread.this) {
                 stopRead = true;
             }

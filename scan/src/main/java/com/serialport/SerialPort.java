@@ -128,6 +128,10 @@ public class SerialPort extends ISerialPort {
             writeFile(new File(SCAN_RESET), "0");
             writeFile(new File(IR_EN), "0");
             writeFile(new File(SCAN_SWITCH), "0");
+        } else {
+            if (powerListener != null) {
+                powerListener.powerOffBefore();
+            }
         }
 
     }
